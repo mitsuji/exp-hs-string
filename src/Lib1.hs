@@ -4,8 +4,10 @@ module Lib1
     ( someFunc
     ) where
 
-import Data.Monoid ((<>),mconcat,mempty)
+import Data.Monoid ((<>))
 import Control.Monad.Writer.Lazy
+
+import Text.Read (Read(..),Lexeme(..),readListPrecDefault,lexP)
 
 import qualified Data.Text as T
 import qualified Data.Text.IO as T
@@ -22,6 +24,7 @@ import qualified Data.ByteString.Lazy as LBS
 import qualified Data.ByteString.Builder as BSB
 import Data.Word (Word8)
 import Data.Bits (shift)
+
 
 someFunc :: IO ()
 someFunc = putStrLn "someFunc"
@@ -45,9 +48,9 @@ print5 = putStrLn $ show 101
 
 
 data Some = Some Int Int Int
-          deriving (Show)
+          deriving (Show,Read)
 
-show1 :: IO()
+show1 :: IO ()
 show1 = putStrLn $ show (Some 101 102 103)
 
 
@@ -59,12 +62,62 @@ show2 :: IO ()
 show2 = putStrLn $ show (Date 2018 3 4)
 
 
-newtype Date' = Date' Date
+
+newtype Date' = Date' { getDate :: Date }
 instance Show Date' where
   show (Date'(Date y m d)) = (show y) <> "-" <> (show m) <> "-" <> (show d)
 
 show3 :: IO ()
 show3 = putStrLn $ show $ Date' (Date 2018 3 4)
+
+
+
+read1 :: IO ()
+read1 =
+  let
+    n1 = (read :: String -> Float) "101"
+    n2 = (read :: String -> Float) "10.123"
+  in putStrLn $ show $ n1 + n2
+
+read2 :: IO ()
+read2 = 
+  let
+    (Some a b c) = (read :: String -> Some) "Some 11 22 33"
+  in putStrLn $ (show a) <> " " <> (show b) <> " " <> (show c) 
+
+
+instance Read Date where
+  readPrec = do
+    y <- readPrec
+    Symbol "/" <- lexP
+    m <- readPrec
+    Symbol "/" <- lexP
+    d <- readPrec
+    return $ Date y m d
+    
+  readListPrec = readListPrecDefault
+
+read3 :: IO ()
+read3 = putStrLn $ show $ (read :: String -> Date) "2018/05/06"
+
+
+instance Read Date' where
+  readPrec = do
+    y <- readPrec
+    Symbol "-" <- lexP
+    m <- readPrec
+    Symbol "-" <- lexP
+    d <- readPrec
+    return $ Date' $ Date y m d
+    
+  readListPrec = readListPrecDefault
+
+read4 :: IO ()
+read4 = putStrLn $ show $ getDate $ (read :: String -> Date') "2018-05-06"
+
+
+
+
 
 
 
