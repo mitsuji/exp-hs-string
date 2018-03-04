@@ -182,7 +182,7 @@ textconcat5 = LT.putStrLn $ LTB.toLazyText $ execWriter f
 bs1 :: IO ()
 bs1 = putStr $ decode $ BS.unpack $ BS.pack [72,101,108,108,111,10] -- "Hello"
   where
-    decode = map (toEnum . fromIntegral)
+    decode = fmap (toEnum . fromIntegral)
 
 bs2 :: IO ()
 bs2 = BS.putStr $ BS.pack [72,101,108,108,111,10] -- "Hello"
@@ -231,7 +231,7 @@ bsconcat3 = do
   LBS.putStr $ "Hello" <> ", " <> (LBS.pack $ encode $ show 101) <> " World! " <> (LBS.pack $ encode $ show 0.123) <> "\n"
   LBS.putStr $ BSB.toLazyByteString $ "Hello, " <> BSB.intDec 101 <> " World! " <> BSB.floatDec 0.123 <> "\n"
   where
-    encode = map (fromIntegral . fromEnum)
+    encode = fmap (fromIntegral . fromEnum)
 
 bsconcat4 :: IO ()
 bsconcat4 = LBS.putStr $ BSB.toLazyByteString $ execWriter f
