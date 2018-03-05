@@ -196,7 +196,7 @@ bs4 =
   let
     l1 = (length :: [Char] -> Int) "Hello, World!こんにちは"
     l2 = T.length "Hello, World!こんにちは"
-    l3 = BS.length "Hello, World!こんにちは"
+    l3 = BS.length "Hello, World!KNNCH"
   in putStrLn ( (show l1) <> " " <> (show l2) <> " " <> (show l3))
 
 
