@@ -19,6 +19,9 @@ import qualified Data.Text.Lazy.Builder as LTB
 import Data.Text.Lazy.Builder.Int as LTB
 import Data.Text.Lazy.Builder.RealFloat as LTB
 
+import qualified Data.Text.Read as TR
+import qualified Data.Text.Lazy.Read as LTR
+
 import qualified Data.ByteString as BS
 import qualified Data.ByteString.Lazy as LBS
 import qualified Data.ByteString.Builder as BSB
@@ -177,6 +180,47 @@ textconcat5 = LT.putStrLn $ LTB.toLazyText $ execWriter f
       tell "World!\n"
       tell "World!\n"
       
+textread1 :: IO ()
+textread1 =
+  let
+    Right (n1,_) = TR.decimal "101"
+    Right (n2,_) = TR.hexadecimal "FF"
+    Right (n3,_) = (TR.signed TR.decimal) "-101"
+    Right (n4,_) = (TR.signed TR.hexadecimal) "-FF"
+    Right (n5,_) = TR.rational "0.123"
+    Right (n6,_) = (TR.signed TR.rational) "-0.123"
+    Right (n7,_) = TR.double "0.123"
+    Right (n8,_) = (TR.signed TR.double) "-0.123"
+  in putStrLn $ show (n1,n2,n3,n4,n5,n6,n7,n8)
+
+textread2 :: IO ()
+textread2 =
+  let
+    Right (n1,_) = LTR.decimal "101"
+    Right (n2,_) = LTR.hexadecimal "FF"
+    Right (n3,_) = (LTR.signed LTR.decimal) "-101"
+    Right (n4,_) = (LTR.signed LTR.hexadecimal) "-FF"
+    Right (n5,_) = LTR.rational "0.123"
+    Right (n6,_) = (LTR.signed LTR.rational) "-0.123"
+    Right (n7,_) = LTR.double "0.123"
+    Right (n8,_) = (LTR.signed LTR.double) "-0.123"
+  in putStrLn $ show (n1,n2,n3,n4,n5,n6,n7,n8)
+
+textread3 :: IO ()
+textread3 = do
+  s <- T.getLine
+  case TR.decimal s of
+    Left e      -> putStrLn $ "error: " <> e
+    Right (n,_) -> putStrLn $ "number: " <> show n
+
+textread4 :: IO ()
+textread4 = do
+  s <- T.getLine
+  case (TR.signed TR.decimal) s of
+    Left e      -> putStrLn $ "error: " <> e
+    Right (n,_) -> putStrLn $ "number: " <> show n
+
+
 
 
 bs1 :: IO ()
